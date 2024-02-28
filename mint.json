@@ -1,15 +1,19 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "name": "Atom Solution",
   "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/light.svg"
+    "light": "/logo/atom_light.svg",
+    "dark": "/logo/atom_dark.svg"
+  },
+  "modeToggle": {
+    "default": "light",
+    "isHidden": false
   },
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373",
+    "primary": "#ed1c23",
+    "light": "#ed1c23",
+    "dark": "#ed1c23",
     "anchors": {
       "from": "#0D9373",
       "to": "#07C983"
@@ -18,7 +22,7 @@
   "topbarLinks": [
     {
       "name": "Support",
-      "url": "mailto:hi@mintlify.com"
+      "url": "support@atomsolution.com"
     }
   ],
   "topbarCtaButton": {
@@ -31,24 +35,22 @@
       "url": "api-reference"
     }
   ],
-  "anchors": [
-    {
-      "name": "Documentation",
-      "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
-    },
-    {
-      "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
-    },
-    {
-      "name": "Blog",
-      "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
-    }
-  ],
   "navigation": [
+    {
+      "group": "ATOM Get Started",
+      "pages": [
+        "get-started/introduction",
+        "get-started/atom-gw",
+        "get-started/bank-diagram"
+      ]
+    },
+    {
+      "group": "Wirecard Security Gateway",
+      "pages": [
+        "wirecard-gw/solution",
+        "wirecard-gw/message-specification"
+      ]
+    },
     {
       "group": "Get Started",
       "pages": [

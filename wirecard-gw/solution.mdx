@@ -1,0 +1,38 @@
+---
+title: 'Solution'
+description: 'Introducing the Wirecard Security Gateway: A Comprehensive Review'
+---
+
+## Introduction
+
+Wirecard Security Gateway (WD-SG) is a line encryption solution which secures the communications on PSTN, TCP/IP network.
+
+WD-SG encrypts/decrypts the financial transactions in ISO-8583 message between Point of Sale (POS) device and bank system to enhance security.
+
+WD-SG new generation is upgraded to enhance the usefulness of users and performance of processing.
+
+!["Wirecard Diagram"](./images/wirecard-gw/wd-diagram.png)
+
+## Network Diagram
+
+POS uses the connection with TCP/IP
+
+!["Wirecard Network Diagram"](./images/wirecard-gw/wd-tcp.png)
+
+## Key Manganagement and Proccess
+
+• **Asymmetric Smart Card Key Pair**: Using to encrypt/decrypt TMK.
+
+• **TMK**: Terminal Master Key - Using to encrypt/decrypt DEK&MPK. Each POS terminal has a
+different TMK.
+
+• **DEK**: Data Encryption Key – Using to encrypt the client data.
+
+• **MPK**: Message Protection Key – To make sure of the perfection of data.
+
+• DEK & MPK may be configured for changing after each transaction.
+
+
+!["Wirecard Key Manganagement"](./images/wirecard-gw/wd-key-manage.png)
+
+
