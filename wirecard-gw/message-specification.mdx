@@ -111,3 +111,107 @@ The format of the message to send to WD-Security Gateway is shown as below:
     | WrongSignature | `0A00` || PackDataError | `0B00` |
   </Accordion>
 </AccordionGroup>
+
+## Example Message
+This section will show example with detailed explanation.
+
+With this sample between POS and Encryption Gateway already setup same
+configuration as below:
+<Note>
+  Algorithm TRIPLE DES 24 bytes 
+  
+  Cipher Mode = CBC
+  
+  Algorithm SHA1 hash
+
+  KEK = 765749A8408540ECE3201FAD673E8A1C589E3D3BAE01CE38
+  
+  Initial Vector = 8FF25ED5675EC886
+  
+</Note>
+
+### Logon Request
+
+`005460003200053456a55003030011a551020008a552020000a555083031313030313930a5560f3131313131313131313131313131315678`
+
+- `00 54` : **message length** (54 bytes)
+- `60 00 32 00 05` : **TDPU**
+- `34 56` : **TAG_START_INDICATOR**
+- `a5 50 03 03 00 11` : **TAG_CIPHER_INFO** 
+- `a5 51 02 00 08` : **TAG_MESSAGE_TYPE**
+- `a5 52 02 00 00` : **TAG_LENGTH_OF_MESSAGE** 
+- `a5 55 08 30 31 31 30 30 31 39 30` : **TAG_CLIENT_ID** -> Client ID = 01100190
+- `a5 56 0f 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31` : **TAG_MERCHANT_ID** -> Merchant ID = 111111111111111
+- `56 78` : **TAG_END_INDICATOR**
+
+### Logon Response 
+
+`011360000500323456a551021008a55003030011a555083031313030313930a5560f313131313131313131313131313131a565020000a56318a561f01363900dbba58627ffcbc80e3d17ff1502908b25c0a56418f8a2480dec32b52fb74e3b88162cf79d695050a4c6b0c875a5520200005678`
+
+- `01 13` : **message length** (113 bytes)
+- `60 00 05 00 32` : **TDPU**
+- `34 56` : **TAG_START_INDICATOR**
+- `a5 51 02 10 08` : **TAG_MESSAGE_TYPE**
+- `a5 50 03 03 00 11` : **TAG_CIPHER_INFO**
+- `a5 55 08 30 31 31 30 30 31 39 30` : **TAG_CLIENT_ID**
+- `a5 56 0f 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31` : **TAG_MERCHANT_ID**
+- `a5 65 02 00 00` : **ERROR_CODE** -> no error code
+- `a5 63 18 a5 61 f0 13 63 90 0d bb a5 86 27 ff cb c8 0e 3d 17 ff 15 02 90 8b 25 c0` : **TAG_ENCRYPTED_DEK**
+  - Decrypt by KEK -> DEK = `e03977f742037a8f543938e974664e967843de21021c4150`
+- `a5 64 18 f8 a2 48 0d ec 32 b5 2f b7 4e 3b 88 16 2c f7 9d 69 50 50 a4 c6 b0 c8 75` : **TAG_ENCRYPTED_MPK**
+  - Decrypt by KEK -> MPK = `009fd9186e0829f5a4dc86565b1716ea9a0e7080f7038749`
+- `a5 52 02 00 00` : **TAG_LENGTH_OF_MESSAGE** 
+- `56 78` : **TAG_END_INDICATOR**
+
+### Normal Request
+Raw Message : `0046600032000508002020010000c0000090000000007003203031313030313930313131313131313131313131313131`
+
+Message sent to Gateway: `012960003200053456a551020001a55003030011a555083031313030313930a5560f313131313131313131313131313131a554185c5fb2e9250cc070522dec22494cd70e9f2c7bae79c3f230a55202004856783d15e5f903c094e6e06c696d13d6cdc015d2fd506ea244cd4571088a082504fb694beed68e339fc51ddb7058be8e2e9a`
+
+- `01 29` : **message length** (129 bytes)
+- `60 00 32 00 05` : **TDPU**
+- `34 56` : **TAG_START_INDICATOR**
+- `a5 51 02 00 01` : **TAG_MESSAGE_TYPE**
+- `a5 50 03 03 00 11` : **TAG_CIPHER_INFO**
+- `a5 55 08 30 31 31 30 30 31 39 30` : **TAG_CLIENT_ID** -> Client ID = 01100190
+- `a5 56 0f 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31` : **TAG_MERCHANT_ID** -> Merchant ID = 111111111111111
+- `a5 54 18 5c 5f b2 e9 25 0c c0 70 52 2d ec 22 49 4c d7 0e 9f 2c 7b ae 79 c3 f2 30` : **TAG_ENCRYPTED_MAC**
+  - Hash raw message to SHA1 to : `b49ffbced5f000c1e4dbed9e3ce6ac0a51217cb7`
+  - Hashed message after padding: `b49ffbced5f000c1e4dbed9e3ce6ac0a51217cb700000000`
+  - Encrypt hashed message with MPK: `5c5fb2e9250cc070522dec22494cd70e9f2c7bae79c3f230`
+- `a5 52 02 00 48` : **TAG_LENGTH_OF_MESSAGE**
+- `56 78` : **TAG_END_INDICATOR**
+- `3d 15 e5 f9 03 c0 94 e6 e0 6c 69 6d 13 d6 cd c0 15 d2 fd 50 6e a2 44 cd 45 71 08 8a 08 25 04 fb 69 4b ee d6 8e 33 9f c5 1d db 70 58 be 8e 2e 9a` : **TAG_ENCRYPTED_MESSAGE**
+  - Raw message after padding: `0046600032000508002020010000c0000090000000007003203031313030313930313131313131313131313131313131`
+  - Encrypt raw message by DEK: `3d15e5f903c094e6e06c696d13d6cdc015d2fd506ea244cd4571088a082504fb694beed68e339fc51ddb7058be8e2e9a`
+
+### Normal Response
+
+  - `60 00 05 00 32` : **TDPU**
+  - `a5 51 02 10 01` : **TAG_MESSAGE_TYPE**
+  - `a5 50 03 03 00 11` : **TAG_CIPHER_INFO**
+  - `a5 63 18 a5 3c 32 61 b7 36 e3 6d 74 b9 5c 83 21 51 54 dc 79 46 77 7d b2 14 7c 41` : **ENCRYPTED_DEK**
+    - Decrypt by KEK -> DEK = `23b49c91dcad6252ed0892362c84841ef78ca143cfd2e5d3`
+  - `a5 64 18 d2 19 ad ff c7 78 3c d3 68 34 85 88 29 b0 c0 4f ea e5 64 b0 c2 0c d0 f5` : **ENCRYPTED_MPK**, 
+  - `a5 55 08 30 31 31 30 30 31 39 30` : **TAG_CLIENT_ID** -> Client ID = 01100190
+  - `a5 56 0f 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31` : **TAG_MERCHANT_ID** -> Merchant ID = 111111111111111
+  - `a5 65 02 00 00` : **ERROR_CODE** -> no error code
+  - `a5 52 02 00 91` : **TAG_LENGTH_OF_MESSAGE** 
+  - `82964ff97e2c690184004e66ff5767edebff986851b448a38bd33f2a041db13963857acfcc7758b4c438d377d97606a9d9c96ead543774d43c233b27b28344bcff944525d607533b6ffc3e9b188d114e82c64cb312c1717d34d97b0d51bdc0be` : **ENCRYPTED_MESSAGE***, 
+    - Decypt by DEK -> RAW MESSAGE = `0059600005003208102038010002c000049000000000701737560228032030303031313030313930313131313131313131313131313131003400325ad2c2ebf02c5b54b9956b0282d7f202ffffffffffffffffffffffffffffffff0000000000`
+  ```
+  ********** Response ***********
+  <isomsg direction="incoming">
+    <header>6000050032</header>
+    <field id="0" value="0810"/>
+    <field id="3" value="900000"/>
+    <field id="11" value="000070"/>
+    <field id="12" value="173756"/>
+    <field id="13" value="0228"/>
+    <field id="24" value="032"/>
+    <field id="39" value="00"/>
+    <field id="41" value="01100190"/>
+    <field id="42" value="111111111111111"/>
+    <field id="62" value="\u00002ZÒÂëð,[T¹k\u0002×ò\u0002ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ"/>
+  </isomsg>
+  ```

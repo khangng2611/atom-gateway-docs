@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  gateway-docs:
+    build: ./
+    container_name: gateway-docs
+    restart: always
+    ports:
+      - "3001:3000"
